@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">PinTu</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="about_title">关于</string>
+    <string name="about_msg">版权所有，欢迎试玩！</string>
+    <string name="btn_ok">确定</string>
+    <string name="btn_cancel">取消</string>
+    <string name="exit_title">退出游戏</string>
+    <string name="exit_msg">是否退出游戏</string>
+    <string name="setting_state">声音状态</string>
+    <string name="settting_music">开启/关闭声音</string>
+    <string name="setting_adjust">放大/减小音量</string>
+    <string name="setting_volume">音量显示</string>
+    <string name="setting_clear">清空存档</string>
+    <string name="setting_back">返回</string>
+    <string name="game_win">恭喜你，游戏过关！</string>
+    <string name="game_menu_continue">返回游戏</string>
+    <string name="game_menu_help">游戏帮助</string>
+    <string name="game_menu_setting">游戏设置</string>
+    <string name="game_menu_menu">返回主菜单</string>
+    <string name="game_dialog_back">是否返回选关</string>
+	<string name="inputName">请输入您的大名</string>
+	<string name="inputText">打破记录啦！作为高手，请一定留下您的大名！</string>
+</resources>

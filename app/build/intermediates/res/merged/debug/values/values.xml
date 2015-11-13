@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/C:/Users/admin/AndroidStudioProjects/PinTu/app/src/main/res/values/arrays.xml -->
+    <eat-comment/>
+    <string-array name="flush_strings">
+        <item>图片打乱中</item>
+        <item>图片打乱中。</item>
+        <item>图片打乱中。。</item>
+        <item>图片打乱中。。。</item>
+        <item>图片打乱中。。。。</item>
+    </string-array>
+    <string-array name="help_content">
+        <item>\n一、基本操作\n点击欲移动格子进行移动.\n点击缩略图查看原图。\n点击播放图标重放游戏步骤。\n游戏中按手机返回键:弹出菜单中选择返回选关界面;\n\n二、难度设定\n游戏根据简单，普通，困难三个难度将拼图分割为3*3,4*4,5*5三种样式。\n\n</item>
+        <item>\n在主菜单点击积分排名按钮可查看每个难度下过关的最短时间。\n</item>
+    </string-array>
+    <string-array name="help_title">
+        <item>游戏操作</item>
+        <item>游戏系统</item>
+    </string-array>
+    <!-- From: file:/C:/Users/admin/AndroidStudioProjects/PinTu/app/src/main/res/values/dimens.xml -->
+    <eat-comment/>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <!-- From: file:/C:/Users/admin/AndroidStudioProjects/PinTu/app/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="about_msg">版权所有，欢迎试玩！</string>
+    <string name="about_title">关于</string>
+    <string name="action_settings">Settings</string>
+    <string name="app_name">PinTu</string>
+    <string name="btn_cancel">取消</string>
+    <string name="btn_ok">确定</string>
+    <string name="exit_msg">是否退出游戏</string>
+    <string name="exit_title">退出游戏</string>
+    <string name="game_dialog_back">是否返回选关</string>
+    <string name="game_menu_continue">返回游戏</string>
+    <string name="game_menu_help">游戏帮助</string>
+    <string name="game_menu_menu">返回主菜单</string>
+    <string name="game_menu_setting">游戏设置</string>
+    <string name="game_win">恭喜你，游戏过关！</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="inputName">请输入您的大名</string>
+    <string name="inputText">打破记录啦！作为高手，请一定留下您的大名！</string>
+    <string name="setting_adjust">放大/减小音量</string>
+    <string name="setting_back">返回</string>
+    <string name="setting_clear">清空存档</string>
+    <string name="setting_state">声音状态</string>
+    <string name="setting_volume">音量显示</string>
+    <string name="settting_music">开启/关闭声音</string>
+    <!-- From: file:/C:/Users/admin/AndroidStudioProjects/PinTu/app/src/main/res/values/styles.xml -->
+    <eat-comment/>
+    <style name="AppBaseTheme" parent="android:Theme.Light">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+    </style>
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+    <style name="SettingText">
+        <item name="android:textColor">#ff000000</item>
+        <item name="android:background">#ddddcc00</item>
+    </style>
+</resources>

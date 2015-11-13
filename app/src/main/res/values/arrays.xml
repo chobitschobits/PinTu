@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="help_title">
+        <item >游戏操作</item>
+        <item >游戏系统</item>
+    </string-array>
+    
+    <string-array name="help_content">
+        <item >\n一、基本操作\n点击欲移动格子进行移动.\n点击缩略图查看原图。\n点击播放图标重放游戏步骤。\n游戏中按手机返回键:弹出菜单中选择返回选关界面;\n\n二、难度设定\n游戏根据简单，普通，困难三个难度将拼图分割为3*3,4*4,5*5三种样式。\n\n</item>
+        <item >\n在主菜单点击积分排名按钮可查看每个难度下过关的最短时间。\n</item>
+    </string-array>
+    
+    <string-array name="flush_strings">
+        <item >图片打乱中</item>
+        <item >图片打乱中。</item>
+        <item >图片打乱中。。</item>
+        <item >图片打乱中。。。</item>
+        <item >图片打乱中。。。。</item>
+    </string-array>
+
+</resources>

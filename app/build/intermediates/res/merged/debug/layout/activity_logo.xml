@@ -1,0 +1,29 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LogoActivity" >
+
+    <ImageView
+        android:id="@+id/imageView_mm"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/mmlogo" />
+
+
+    <ImageView
+        android:id="@+id/imageView_and1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/and1"
+        android:visibility="invisible"
+        android:scaleType="fitXY"/>
+
+    <ImageView
+        android:id="@+id/imageView_logo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/logo" 
+        android:scaleType="fitXY"
+        android:visibility="invisible"/>
+</RelativeLayout><!-- From: file:/C:/Users/admin/AndroidStudioProjects/PinTu/app/src/main/res/layout/activity_logo.xml -->
