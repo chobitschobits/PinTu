@@ -1,0 +1,250 @@
+# PinTu
+游戏拼图架构设计
+项目分析
+由于游戏拼图项目开发周期非常短，因此将尽量利用Android现有界面控件进行大部分游戏界面的开发，尽量减少手动绘制界面的操作以实现快速开发的目的。
+游戏拼图包含的android控件应用大约占70%，对初学者的android基础知识有很好的练习，有助于初学者打下良好的基础。同时还大量的使用XML布局，使初学者较快的掌握项目界面的构建。
+详细需求中说到游戏拼图的设计包括10个功能界面，分别为游戏Logo、主菜单、游戏帮助、游戏设置、游戏选关、游戏随机初始化、进行游戏、游戏胜利、信息输入、排行榜功能；除了界面，它还有3个对话框，分别为游戏关于对话框、退出游戏对话框以及二级菜单对话框。
+通过详细需求首先我们可以把游戏Logo、主菜单拿出来；然后为了让游戏功能清晰，我们把剩下的功能界面以及对话框分成6大模块，分别为游戏过程、积分排名、游戏设置、游戏帮助、游戏关于以及退出游戏，这6大功能模块可以通过主菜单界面进行跳转。通过功能模块的名字我们可以对功能界面以及对话框进行划分：
+1)游戏过程模块：它是游戏开始到结束整个过程，所以它根据整个游戏过程又可以分为三个阶段，分别是游戏前（选关界面），游戏中（游戏随机初始化界面、游戏界面、二级菜单对话框、游戏胜利界面），游戏后（信息输入界面）；
+2)游戏帮助模块：游戏帮助界面；
+3)积分排名模块：排行榜功能界面；
+4)游戏设置模块：游戏设置界面；
+5)游戏关于模块：游戏关于对话框；
+6)退出游戏模块：退出游戏对话框。
+根据功能进行分块后为减小项目内部的复杂关联，游戏拼图项目采用多Activity模式进行开发设计。它们分别是游戏Logo界面（LogoActivity）、主菜单界面（MenuActivity）、游戏帮助（HelpActivity）、游戏设置（OptionActivity）、选关界面（SelectGame）、游戏过程界面（GameActivity）、信息输入界面（InputName）以及排行榜功能界面（RankActivity）共8个Activity，它们利用Intent进行Activity之间的相互切换实现游戏不同界面的跳转,每个Activity内根据需要建立各自的显示内容。游戏拼图界面的Activity如 表1 所示。
+表1 游戏拼图界面
+类名	继承于	功能
+LogoActivity	Activity	Logo界面
+MenuActivity	Activity	主菜单界面
+HelpActivity	ListActivity	游戏帮助界面
+OptionActivity	Activity	游戏设置界面
+SelectGame	Activity	游戏选关界面
+GameActivity	Activity	游戏界面
+InputName	Activity	信息输入界面
+RankActivity	ExpandableListActivity	排行榜功能界面
+游戏拼图界面是使用Activity类通过Intent进行跳转，但游戏拼图除了界面的跳转还包括音乐播放、数据操作、自定义View以及拼图操作，为了区分这些类的不同功能，游戏拼图项目分成5个包。它们分别是：
+1)Activity包——app.activity：app.activity包含所有的Activity，它主要负责界面的显示和跳转。app.activity包含LogoActivity、MenuActivity、HelpActivity、OptionActivity、SelectGame、GameActivity、InputName、RankActivity等8个Activity类。
+2)视图包——app.view：app.view 包含所有与Activity类相关的自定义的视图类，它主要负责绘制Activity需要自定义的视图。 LogoView（Logo界面显示）以及GameView（游戏界面显示）。
+3)游戏操作逻辑包——app.sprite：app.sprite包含所有与游戏逻辑相关的类，它主要负责游戏逻辑的操作以及图片的切分。BlockGroup（游戏操作逻辑）、Block（拼图中的小格）以及ImageRect（拼图中的小格里的图片）。
+
+图1Activity类跳转关系图
+4)数据库包——app.rank：app.rank包含所有与数据库相关的类，它主要负责数据的插入、存储以及查询操作。它们分别是RankDBHelper（数据库和表的创建）以及Rank（数据的操作）。
+
+图2Rank类与其他类的关系图
+5)声音包——app.sound：app.sound包含所有与游戏声音相关的类，它主要负责游戏音乐的加载，播放，暂停，停止功能。在这个包新建Music类，用来操作音乐相关的功能。
+
+图3Music类与其他类的关系图
+根据以上初步对项目的分析，Activity包每个类会与其他包中的类相关，如表2 所示。
+表2 Activity类与其他类的关系表
+Activity	Activity相关类
+LogoActivity	LogoView、Rank
+MenuActivity	Music
+HelpActivity	
+OptionActivity	Rank、Music
+SelectGame	Music
+GameActivity	GameView、Music、Rank
+InputName	Rank
+RankActivity	Rank
+详细设计
+有部分Activity类使用view包的自定义的视图类进行绘制或者加载xml文件，还有一些视图与Activity类设置的适配器等不好分开，这时我们就会设置一些自定义的内部类。所以Activity类还会直接调用内部类进行界面的显示。
+1)LogoActivity继承Activity，它通过调用LogoView显示界面。同时，LogoActivity通过Intent可以跳转到MenuActivity。 
+2)MenuActivity继承Activity，它通过加载menu.xml显示界面。MenuActivity通过Intent可以分别跳转到SelectGame、RankActivity、OptionActivity以及HelpActivity，并且MenuActivity还调用Music播放音乐。
+3)HelpActivity继承ListActivity，它通过设置适配器HelpListAdapter显示列表界面，而HelpListAdapter中每个界面元素样式都是由HelpView决定。
+4)OptionActivity继承Activity，它通过调用option.xml显示界面。OptionActivity可以清空Rank排名信息以及调用Music更改音乐播放的相关设置。
+5)SelectGame继承Activity，它通过加载select.xml显示界面，界面中Gallery显示的每张图片都是通过设置适配器ImageAdapter来填充的。在SelectGame中选好图片以及难度就通过Intent跳转到GameActivity。
+6)GameActivity继承Activity，它通过调用GameView显示界面，还调用Music播放音乐。GameView也调用了Music，主要是当游戏胜利时把背景音乐改成游戏胜利；除了调用Music，它还调用了BlockGroup这个游戏逻辑实现类以及Block格子类。
+7)InputName继承Activity，它通过加载inputname.xml显示界面。同时，OptionActivity通过调用Rank保存用户名以及用户成绩。
+8)RankActivity继承ExpandableListActivity，它通过设置适配器setListAdapter (MyExpandableListAdapter)显示列表界面。RankActivity中的排行榜显示的数据是通过调用Rank查询到的用户名称和用户成绩。
+
+图4Activity类与其他类（包含内部类）关系图
+通过图4，获得关系表表3 如所示。
+表3 Activity类与其他类（包含内部类）关系表
+Activity	Activity相关类
+LogoActivity	LogoView、Rank
+MenuActivity	Music
+HelpActivity	HelpListAdapter、HelpView
+OptionActivity	Rank、Music
+SelectGame	ImageAdapter、Music
+GameActivity	GameView、Music、Rank
+InputName	Rank
+RankActivity	MyExpandableListAdapter 、Rank
+
+游戏Logo界面
+Logo界面主要由LogoActivity类和LogoView类组成。
+LogoActivity类
+在app.activity包中，它继承Activity。LogoActivity在onCreate方法中调用自定义View（LogoView）类依次显示3张Logo图片。游戏Logo部分每张Logo图片显示2秒之后自动跳到下张Logo图片，如果图片显示未满2秒则点击屏幕不执行任何操作，而按返回键则直接退出游戏。3张Logo图片显示之后，通过Intent跳转到MenuActivity类。
+LogoView类
+在app.view包中，它继承View实现Runnable接口。LogoView与LogoActivity相关，LogoActivity调用它进行界面显示。游戏Logo界面图片显示顺序如图5所示。
+
+图5游戏Logo界面图片显示顺序
+1)LogoActivity在onCreate方法中首先调用自定义的设置全屏显示setFullScreen()方法，其次对LogoView进行实例化，最后通过setContentView把实例化对象设置到当前Activity中；
+2)LogoView在构造方法中实例化3张Logo图片，并且启动线程run()方法；
+表4 Logo画面图片资源表
+Logo图片功能	资源图片
+渠道商Logo	mmlogo.jpg
+开发商Logo	and1.jpg
+游戏Logo	logo.jpg
+3)LogoView在run()方法中，当计时结束释放LogoView调用LogoActivity的gotoMenu方法；
+4)LogoActivity的gotoMenu方法首先调用Rank类中loadRank方法来加载游戏记录，其次通过Intent跳转切换到MenuActivity类，最后结束当前的Activity。
+游戏主菜单界面
+主菜单界面主要是由MenuActivity类以及menu.xml文件组成。
+MenuActivity类在app.activity包中，它继承Activity。当LogoActivity结束释放LogoView自动跳转到MenuActivity，它用于实现菜单的显示以及功能按钮的点击事件，同时在onCreate方法中通过setContentView加载menu.xml文件（menu.xml资源如表5 所示），主菜单界面如图6所示。在游戏主菜单界面，点击“back”键则弹出退出游戏对话框，如图8所示。
+表5 menu.xml资源表
+组件类型	id	资源	功能
+RelativeLayout	widget29	menuback.jpg	Menu背景
+ImageView	imgbtn_menu_start	bm1.png	开始游戏
+ImageView	imgbtn_menu_rank	bm2.png	积分排名
+ImageView	imgbtn_menu_audio	bm3.png	游戏设置
+ImageView	imgbtn_menu_help	bm4.png	游戏帮助
+ImageView	imgbtn_menu_about	bm5.png	游戏关于
+ImageView	imgbtn_menu_stop	bm6.png	退出游戏
+
+
+图6游戏主菜单界面
+1)在onCreate方法中设置“开始游戏”按钮的监听事件，在“开始游戏”按钮的监听事件中通过Intent跳转到SelectGame类；
+2)在onCreate方法中设置“积分排名”按钮的监听事件，在“积分排名”按钮的监听事件中通过Intent跳转到RankActivity类；
+3)在onCreate方法中设置“游戏设置”按钮的监听事件，在“游戏设置”按钮监听事件中通过Intent跳转到OptionActivity类；
+4)在onCreate方法中设置“游戏帮助”按钮的监听事件，在“游戏帮助”按钮的监听事件中通过Intent跳转到HelpActivity类；
+5)在onCreate方法中设置“游戏关于”按钮的监听事件，在“游戏关于”按钮的监听事件中弹出AlertDialog对话框显示游戏关于相应的内容，游戏关于对话框如图7所示；
+
+图7游戏关于对话框
+6)在onCreate方法中设置“退出游戏”按钮的监听事件，在“退出游戏”按钮的监听事件中调用MenuActivity的退出游戏exitGame()方法；
+7)MenuActivity的exitGame()方法中，通过AlertDialog弹出用于执行二次确认是否退出游戏的对话框。退出游戏对话框如图8所示，如果点击返回就继续在游戏主菜单界面，而点击退出则退出游戏；
+
+图8退出游戏对话框
+8)重写onKeyDown()方法判断KEYCODE_BACK按键是否被点击，如果被点击则调用exitGame()方法进行二次确认是否退出游戏。
+游戏帮助界面
+帮助界面主要是由HelpActivity类、HelpListAdapter类以及HelpView类组成。
+HelpActivity类
+在app.activity包中，它继承ListActivity。它是在MenuActivity中触发“游戏帮助”按钮的监听事件通过Intent跳转到当前界面，如图6所示。
+HelpListAdapter类
+它是HelpActivity的内部类，它继承BaseAdapter类。HelpListAdapter用于加载HelpView类下的标题以及内容。
+HelpView类
+它也是HelpActivity的内部类，它继承LinearLayout类。HelpView用于布局显示并设置其显示方式为vertical。游戏帮助列表界面如图9所示
+
+图9游戏帮助界面
+1)HelpActivity类在onCreate方法中首先调用自定义的设置全屏显示setFullScreen()方法，其次对HelpListAdapter进行实例化，最后通过setListAdapter把实例化对象HelpListAdapter设置到适配器；
+2)HelpListAdapter类是通过重写BaseAdapter中的getView方法，对HelpView进行实例化获得每个item的布局内容；
+3)HelpView类在构造方法中通过调用addView方法把实例化的标题文本框加载到HelpView布局，然后调用addView方法把实例化的内容文本框加载到HelpView布局。
+游戏选关界面
+选关界面主要是由SelectGame、ImageAdapter以及select.xml文件组成。
+SelectGame类
+SelectGame类在app.activity包中，继承了Activity。在MenuActivity中触发“游戏开始”按钮的监听事件可通过Intent跳转到选关界面，同时通过setContentView加载select.xml文件，选关界面如图10所示。
+ImageAdapter类
+它是SelectGame的内部类，继承BaseAdpaer，其中的方法getView(int position, View convertView, ViewGroup parent)，此方法是为Gallery设置每个子项的内容。
+
+图10选关界面
+SelectGame在onCreate方法中首先调用自定义的设置全屏显示setFullScreen()方法，其次通过setContentView加载select.xml文件（select.xml资源如表6 所示），接着通过setAdapter把实例化对象ImageAdapter设置到Gallery中，最后点击Gallery元素的任意位置触发Gallery子元素的监听事件；
+1)select.xml文件使用RelativeLayout布局，其显示方式为vertical。布局里面添加1个Gallery组件以及1个TextView组件，Gallery在布局水平居中垂直距离布局上方100dp的位置，TextView在布局水平居中垂直距离布局下方100dp的位置
+表6 select.xml资源表
+组件类型	id	资源	功能
+Gallery	gallery1		显示选关图片元素
+TextView	textView1	@string/selectgame	提示选择选关图片
+2)ImageAdapter通过重写BaseAdapter中的getView方法，对ImageView进行实例化获得每个item的布局；
+3)在Gallery的子元素的监听事件中，弹出AlertDialog对话框显示游戏难易程度，如图11所示。点击“简单”：对应的难度级别属性（levelIndex）值为3，点击“普通”：对应的难度级别属性（levelIndex）值为4；点击“困难”：对应的难度级别属性（levelIndex）值为5。点击确认后会调用SelectGame类中enterGame()方法；
+
+图11游戏难度对话框
+4)SelectGame类中enterGame()方法首先调用Music类中stop()方法来停止菜单音乐播放，其次通过Intent跳转切换到GameActivity类，最后再次调用Music类中start ()方法播放游戏中的背景音乐。
+游戏界面及逻辑
+游戏界面及逻辑主要是由GameActivity、GameView、BlockGroup、Block以及ImageRect类组成。
+GameActivity类
+GameActivity在app.activity包中，继承Activity。SelectGame类中的enterGame()方法通过Intent跳转到当前界面，这个界面是通过调用GameView构造方法进行显示的，游戏界面如图8所示。
+GameView类
+在app.view包中，它继承SurfaceView实现Runnable接口。GameView与GameActivity相关，GameActivity调用它进行游戏界面显示。
+BlockGroup类
+在app.sprite包中，它是游戏拼图中的游戏逻辑实现类我们在写这个类时图片会调用ImageRect显示图片以及Block封装格子相关数据。同时，BlockGroup类是在GameView中被调用的。
+Block类
+在app.sprite包中，用于封装格子组中每个小格子相关的位置，序号和触摸区域等数据。ImageRect与Block都是与BlockGroup相关的，ImageRect用于进行绘制而Block用于封装格子数据。
+ImageRect类
+在app.sprite包中，用于将整张的大图切分成若干小图块。ImageRect类和Block（格子类）都与BlockGroup（游戏逻辑实现类）相关，ImageRect用于进行绘制而Block用于封装格子数据。
+1)GameActivity在onCreate方法中首先调用自定义的设置全屏显示setFullScreen()方法，其次对GameView进行实例化，最后通过setContentView把实例化对象设置到当前Activity中；
+2)在GameView构造方法中实例化格子组BlockGroup对象获得游戏格子组和回放格子组，并且启动游戏线程；
+3)游戏线程run方法主要是控制游戏按键事件、游戏数据更新和游戏界面绘制；
+4)GameView在游戏胜利状态（如图12所示）时，调用GameActivity中finishGame方法；
+
+图12游戏胜利界面
+5)在GameActivity类中创建选项菜单，点击“menu”键如图13所示，每个选项菜单的item设置相对应的监听事件；
+
+图13弹出菜单界面
+6)当点击选项菜单item的“返回游戏”监听事件，返回游戏界面继续游戏；
+7)当点击选项菜单item的“游戏帮助”监听事件，从当前的Activity跳转到游戏帮助界面HelpActivity，查看完游戏帮助后按返回键又返回游戏界面继续游戏；
+8)当点击选项菜单item的“游戏设置”监听事件，从当前的Activity跳转到游戏设置界面OptionActivity，设置完毕后按返回键重新返回游戏界面继续游戏；
+9)当点击选项菜单item的“返回选关”监听事件，弹出返回选关的二次确认对话框（如图14所示），若点击确定就返回到游戏选关界面SelectGame，点击取消则返回至游戏界面继续游戏。
+
+图14二级菜单对话框
+10)GameActivity中finishGame方法，首先判断游戏时间是否小于排行榜第十名成绩，如果小于就通过Intent跳转到信息输入界面InputName类，然后调用Music类中的start方法播放主菜单音乐，最后结束当前的Activity；
+11)在GameActivity类中重写onKeyDown方法，调用GameView中的线程停止参数设置成true，其次调用Music类中播放音乐方法，最后结束当前的Activity；
+信息输入界面以及排行榜功能界面
+信息输入界面和排行榜功能界面都与RankDBHelper类、Rank类这两个类相关，信息输入界面主要除了和这两个类相关，还由InputName类以及inputname.xml文件组成；而排行榜功能界面则是除这两个类，还由RankActivity类、MyExpandableListAdapter类以及itemlayout.xml文件组成。
+Rank类
+Rank类在app.rank包中，它用于实现数据库方面的操作。在GameActivity类的finishGame方法中调用了Rank类的scores[][]数组判断玩家是否打破记录、InputName类则是调用Rank类中sort方法进行积分排序以及saveRank()方法存储游戏数据、LogoActivity是调用Rank类中loadRank()方法来加载游戏记录以及OptionActivity类中调用Rank的saveRank()方法存储游戏数据。
+RankDBHelper类
+RankDBHelper类在app.rank包中，它继承于SQLiteOpenHelper，主要用于数据库和表的创建。这个数据库有两张表，第一张表存储难度级别，第二张表存储记录的详细信息。
+信息输入界面
+InputName类
+InputName类在app.activity包中，它继承Activity。InputName类是当打破游戏记录时调用GameActivity类中finishGame() 方法通过Intent跳转到信息输入界面，同时通过setContentView加载inputname.xml文件，如图15所示。
+
+图15信息输入界面
+1)InputName类在onCreate方法中首先调用自定义的设置全屏显示setFullScreen()方法，其次通过setContentView加载inputname.xml文件（inputname.xml资源如表7 所示），最后点击 “完成”按钮触发它的监听事件；
+2)inputname.xml使用LinearLayout布局，其显示方式为vertical。布局里面添加2个TextView组件、1个EditText组件以及1个Button组件，TextView组件都是宽度占满LinearLayout，高度由自己字体大小决定；EditText组件和TextView组件相同，也是宽度占满LinearLayout，高度由自己字体大小决定；而Button组件则是宽和高都由文本字体大小决定；
+表7 inputname.xml资源表
+组件类型	id	资源	功能
+TextView	textView1	@string/inputName	提示编辑框需要输入信息
+TextView	textView2	@string/inputText	提示在编辑框输入用户名的原因以及输入信息内容
+EditText	editText1		输入用户名
+Button	button1	@string/complete	点击“完成”按钮，跳转到选关界面可重新开始游戏
+3)在“完成”按钮的监听事件中，调用了Rank类的排序和存储方法，将记录信息存入数据库，在输入框中输入的姓名则存入文件。
+排行榜功能界面
+RankActivity类
+RankActivity类在app.activity包中，它继承ExpandableListActivity。RankActivity类是在MenuActivity中触发“积分排名”按钮的点击事件通过Intent跳转到当前界面，当前界面如图13所示。
+MyExpandableListAdapter类
+MyExpandableListAdapter是RankActivity的内部类，它继承SimpleCursorTreeAdapter实现适配器功能，RankActivity在onCreate方法中调用它。
+
+图16排行榜功能界面
+1)RankActivity 在onCreate方法中首先调用自定义的设置全屏显示setFullScreen()方法，再通过数据库获取难度级别表的信息。通过setListAdapter加载MyExpandableListAdapter的实例化对象，MyExpandableListAdapter实例化对象时加载itemlayout.xml；
+表8 itemlayout.xml资源表
+Id	X坐标	字号/字体	颜色
+tvDifficulty	10px	18sp/ bold	#ffffff00
+tvTime	110px	18sp/ bold	#ffff0000
+tvName	210px	18sp/ bold|italic	#88ffffff
+2)MyExpandableListAdapter继承了SimpleCursorTreeAdapter类，根据难度级别表的信息来获得详细信息及展示给用户；
+3)Rank类里，主要是对数据库及文件的存储、读取、排序和初始化的方法，方便GameActivity、InputName、LogoActivity以及OptionActivity这些类的功能实现；
+4)RankDBHelper类里建立了2张表，分别是难度表和详细信息表，在RankActivity和Rank类需要获取存储数据时调用。
+游戏设置界面
+声音设置界面主要是由OptionActivity类、Music类以及option.xml文件组成。
+OptionActivity类
+在app.activity包中，它继承Activity。OptionActivity类是在MenuActivity中触发“游戏设置”按钮的监听事件通过Intent跳转到当前界面，同时它的界面显示是在onCreate方法中通过setContentView加载option.xml文件，如图10所示。按返回键返回到游戏主菜单界面。
+Music类
+在app.sound包中，它用来实现音乐的加载，播放，暂停，停止等功能。 虽然Music类主要是由OptionActivity类调用，但是MenuActivity、SelectGame、GameView以及GameActivity类中也调用了它部分属性和方法实现游戏音乐功能。
+
+图17游戏设置界面
+1)OptionActivity类在onCreate方法中首先调用自定义的设置全屏显示setFullScreen()方法，然后通过setContentView加载option.xml文件（option.xml资源如表9 所示），最后为每个实例化的按钮对象设置监听事件；
+2)option.xml文件使用LinearLayout嵌套使用，将子组件按照垂直或水平方向来布局。最外层LinearLayout是垂直（vertical）显示，然后每行子布局LinearLayout都是水平显示，它有5个子布局。
+第一个子布局：添加1个TextView组件以及1个ImageView组件；
+第二个子布局：添加1个TextView组件以及2个ImageView组件；
+第三个子布局：和第二个子布局相同，也是添加1个TextView组件以及2个ImageView组件；
+第四个子布局：添加1个TextView组件以及1个SeekBar组件；
+第五个子布局：添加2个Button组件。
+表9 option.xml资源表
+组件类型	id	资源	功能
+TextView	textView1	@string/setstate	提示图片是显示状态
+ImageView	showSound	@drawable/audio_on	声音状态
+TextView	textView2	@string/setsound	提示是开启/关闭声音
+ImageView	soundOn	on.png	开启声音
+ImageView	sonudoff	off.png	关闭声音
+TextView	textView3	@string/setvolume	提示是放大/减小音量
+ImageView	sounddown	up.png	提高音量
+ImageView	soundup	down.png	降低音量
+TextView	textView4	@string/setshow	提示显示音量
+SeekBar	volumebar		显示当前音量/调节音量
+Button	resetbutton	@string/resetbutton	重置游戏排行榜
+Button	returnBtn	@string/setback	跳转到游戏主菜单界面
+3)在ImageView对象soundOn的设置监听事件中，调用本类的setOnMusic()方法开启游戏音乐，同时又调用Music类中saveMusic方法通过数据流把音量和音乐状态保存到文件中；
+4)在ImageView对象soundoff的设置监听事件中，调用本类的setOffMusic()关闭游戏音乐，同时又调用Music类中saveMusic方法通过数据流把音量和音乐状态保存到文件中；
+5)在ImageView对象soundup的设置监听事件中，调用本类的setOnMusic()方法开启游戏音乐，增大音量后调用了Music类中saveMusic方法通过数据流把音量和音乐状态保存到文件中；
+6)在ImageView对象sounddown的设置监听事件中，调用本类的setOnMusic()方法开启游戏音乐，减小音量，如果这是游戏音量为0时会调用setOffMusic()关闭游戏音乐，之后调用Music类中saveMusic方法通过数据流把音量和音乐状态保存到文件中；
+7)在Button对象resetbutton的设置监听事件中，调用Rank类中的reset()方法初始化积分以及调用Rank类中的saveRank()方法存储游戏数据；
+8)在Button对象returnBtn的设置监听事件中，如果退出界面时播放音乐开关为true就调用Music类中start（）方法启动heros.ogg音乐，并且销毁当前界面；
+9) OptionActivity类中setOnMusic()方法是调用Music类中start()方法实现音乐的播放效果以及循环播放；
+10)OptionActivity类中setOffMusic(()方法是调用Music类中实现停止音乐播放stop()方法；
+11)重写onKeyDown()方法判断KEYCODE_BACK按键是否被点击，如果被点击则销毁当前界面，返回到主菜单界面。
